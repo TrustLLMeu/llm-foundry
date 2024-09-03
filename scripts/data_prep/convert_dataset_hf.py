@@ -40,6 +40,8 @@ def parse_args() -> Namespace:
     parser.add_argument('--bos_text', type=str, required=False, default=None)
     parser.add_argument('--eos_text', type=str, required=False, default=None)
     parser.add_argument('--no_wrap', default=False, action='store_true')
+    parser.add_argument('--get_bos_token_id', action='store_true')
+    parser.add_argument('--get_eos_token_id', action='store_true')
     parser.add_argument('--num_workers', type=int, required=False, default=None)
 
     parsed = parser.parse_args()
@@ -60,5 +62,7 @@ if __name__ == '__main__':
         bos_text=args.bos_text,
         eos_text=args.eos_text,
         no_wrap=args.no_wrap,
+        get_bos_token_id=args.get_bos_token_id,
+        get_eos_token_id=args.get_eos_token_id,
         num_workers=args.num_workers,
     )

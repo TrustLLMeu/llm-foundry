@@ -147,9 +147,18 @@ class ConcatTokensDataset(AbstractConcatTokensDataset):
         bos_text: str,
         eos_text: str,
         no_wrap: bool,
+        get_bos_token_id: bool,
+        get_eos_token_id: bool,
     ):
         self.hf_dataset = hf_dataset
         super().__init__(tokenizer, max_length, bos_text, eos_text, no_wrap)
+        # Fix BOS/EOS tokens by getting them from the tokenizer
+        if get_bos_token_id:
+            assert bos_text == '', 'cannot have both `bos_text` and `get_bos_token_id`.'
+            self.bos_tokens = [self.tokenizer.bos_token_id]
+        if get_eos_token_id:
+            assert eos_text == '', 'cannot have both `eos_text` and `get_eos_token_id`.'
+            self.eos_tokens = [self.tokenizer.eos_token_id]
 
     def __iter__(self) -> Iterable[Dict[str, NDArray]]:
         buffer = []
