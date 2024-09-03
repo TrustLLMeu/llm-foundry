@@ -169,6 +169,8 @@ def build_hf_dataset(
     bos_text: str = '',
     eos_text: str = '',
     no_wrap: bool = False,
+    get_bos_token_id: bool = False,
+    get_eos_token_id: bool = False,
     tokenizer: PreTrainedTokenizerBase = None,
     data_subset: Union[str, None] = None,
 ) -> IterableDataset:
@@ -182,6 +184,10 @@ def build_hf_dataset(
         bos_text (str): text to insert at the beginning of each sequence
         eos_text (str): text to insert at the end of each sequence
         no_wrap (bool): if concatenating, whether to wrap text across `max_length` boundaries
+        get_bos_token_id (bool): whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         tokenizer (PreTrainedTokenizerBase): if mode is CONCAT_TOKENS, the tokenizer to use
         data_subset (str): Referred to as "name" in HuggingFace datasets.load_dataset.
             Typically "all" (The Pile) or "en" (c4).
@@ -204,7 +210,7 @@ def build_hf_dataset(
             )
         if max_length is None:
             raise ValueError(f'max_length must be set.')
-        if bos_text + eos_text == '':
+        if bos_text + eos_text == '' and not (get_bos_token_id and get_eos_token_id):
             test_tokens = tokenizer('test')
             if test_tokens['input_ids'][
                 0] != tokenizer.bos_token_id and test_tokens['input_ids'][
@@ -222,6 +228,8 @@ def build_hf_dataset(
             bos_text=bos_text,
             eos_text=eos_text,
             no_wrap=no_wrap,
+            get_bos_token_id=get_bos_token_id,
+            get_eos_token_id=get_eos_token_id,
         )
     return dataset
 
@@ -310,6 +318,8 @@ def convert_dataset_hf(
     bos_text: str,
     eos_text: str,
     no_wrap: bool,
+    get_bos_token_id: bool,
+    get_eos_token_id: bool,
     num_workers: Optional[int],
 ) -> None:
     """Converts HuggingFace datasets to MDS format.
@@ -326,6 +336,10 @@ def convert_dataset_hf(
         bos_text (str): BOS text
         eos_text (str): EOS text
         no_wrap (bool): Do not wrap text across max_length boundaries
+        get_bos_token_id (bool): Whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): Whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         num_workers (Optional[int]): Number of workers
 
     Raises:
@@ -372,6 +386,8 @@ def convert_dataset_hf(
             bos_text=bos_text,
             eos_text=eos_text,
             no_wrap=no_wrap,
+            get_bos_token_id=get_bos_token_id,
+            get_eos_token_id=get_eos_token_id,
             tokenizer=built_tokenizer,
         )
         loader = build_dataloader(
@@ -429,6 +445,8 @@ def convert_dataset_hf_from_args(
     bos_text: Optional[str],
     eos_text: Optional[str],
     no_wrap: bool,
+    get_bos_token_id: bool,
+    get_eos_token_id: bool,
     num_workers: Optional[int],
 ) -> None:
     """A wrapper for `convert_dataset_hf` that parses arguments.
@@ -445,6 +463,10 @@ def convert_dataset_hf_from_args(
         bos_text (Optional[str]): BOS text
         eos_text (Optional[str]): EOS text
         no_wrap (bool): Do not wrap text across max_length boundaries
+        get_bos_token_id (bool): Whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): Whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         num_workers (Optional[int]): Number of workers
 
     Raises:
@@ -485,5 +507,7 @@ def convert_dataset_hf_from_args(
         bos_text=bos_text if bos_text else '',
         eos_text=eos_text if eos_text else '',
         no_wrap=no_wrap,
+        get_bos_token_id=get_bos_token_id,
+        get_eos_token_id=get_eos_token_id,
         num_workers=num_workers,
     )
