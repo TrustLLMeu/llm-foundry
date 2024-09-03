@@ -29,6 +29,8 @@ def build_hf_dataset(
     bos_text: str = '',
     eos_text: str = '',
     no_wrap: bool = False,
+    get_bos_token_id: bool = False,
+    get_eos_token_id: bool = False,
     tokenizer: PreTrainedTokenizerBase = None,
 ) -> IterableDataset:
     """Build an IterableDataset over the HF C4 or pile source data.
@@ -41,6 +43,10 @@ def build_hf_dataset(
         bos_text (str): text to insert at the beginning of each sequence
         eos_text (str): text to insert at the end of each sequence
         no_wrap (bool): if concatenating, whether to wrap text across `max_length` boundaries
+        get_bos_token_id (bool): whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         tokenizer (PreTrainedTokenizerBase): if mode is CONCAT_TOKENS, the tokenizer to use
         data_subset (str): Referred to as "name" in HuggingFace datasets.load_dataset.
             Typically "all" (The Pile) or "en" (allenai/c4).
@@ -68,7 +74,7 @@ def build_hf_dataset(
             )
         if max_length is None:
             raise ValueError(f'max_length must be set.')
-        if bos_text + eos_text == '':
+        if bos_text + eos_text == '' and not (get_bos_token_id and get_eos_token_id):
             test_tokens = tokenizer('test')
             if test_tokens['input_ids'][
                 0] != tokenizer.bos_token_id and test_tokens['input_ids'][
@@ -86,6 +92,8 @@ def build_hf_dataset(
             bos_text=bos_text,
             eos_text=eos_text,
             no_wrap=no_wrap,
+            get_bos_token_id=get_bos_token_id,
+            get_eos_token_id=get_eos_token_id,
         )
     return dataset
 
@@ -100,6 +108,8 @@ def convert_dataset_json(
     bos_text: str = '',
     eos_text: str = '',
     no_wrap: bool = False,
+    get_bos_token_id: bool = False,
+    get_eos_token_id: bool = False,
     num_workers: Optional[int] = None,
 ) -> None:
     """Create C4/pile streaming dataset.
@@ -114,6 +124,10 @@ def convert_dataset_json(
         bos_text (str): Text to insert at the beginning of each sequence
         eos_text (str): Text to insert at the end of each sequence
         no_wrap (bool): Do not wrap text across max_length boundaries
+        get_bos_token_id (bool): Whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): Whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         num_workers (Optional[int]): Number of workers for data loading
     """
     if concat_tokens is not None:
@@ -136,6 +150,8 @@ def convert_dataset_json(
         bos_text=bos_text,
         eos_text=eos_text,
         no_wrap=no_wrap,
+        get_bos_token_id=get_bos_token_id,
+        get_eos_token_id=get_eos_token_id,
         tokenizer=built_tokenizer,
     )
 
@@ -166,6 +182,8 @@ def convert_dataset_json_from_args(
     bos_text: Optional[str] = None,
     eos_text: Optional[str] = None,
     no_wrap: bool = False,
+    get_bos_token_id: bool = False,
+    get_eos_token_id: bool = False,
     num_workers: Optional[int] = None,
 ) -> None:
     """A wrapper for `convert_dataset_json` that parses arguments.
@@ -180,6 +198,10 @@ def convert_dataset_json_from_args(
         bos_text (Optional[str]): Text to insert at the beginning of each sequence
         eos_text (Optional[str]): Text to insert at the end of each sequence
         no_wrap (bool): Do not wrap text across max_length boundaries
+        get_bos_token_id (bool): Whether to get the token ID to insert at the beginning of each
+            sequence from the tokenizer
+        get_eos_token_id (bool): Whether to get the token ID to insert at the end of each sequence
+            from the tokenizer
         num_workers (Optional[int]): Number of workers for data loading
 
     Raises:
@@ -219,5 +241,7 @@ def convert_dataset_json_from_args(
         bos_text=bos_text,
         eos_text=eos_text,
         no_wrap=no_wrap,
+        get_bos_token_id=get_bos_token_id,
+        get_eos_token_id=get_eos_token_id,
         num_workers=num_workers,
     )
