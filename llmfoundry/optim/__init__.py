@@ -1,6 +1,7 @@
 # Copyright 2022 MosaicML LLM Foundry authors
 # SPDX-License-Identifier: Apache-2.0
 
+from torch.optim import AdamW
 from composer.optim import (
     ConstantWithWarmupScheduler,
     CosineAnnealingWithWarmupScheduler,
@@ -18,6 +19,7 @@ optimizers.register('adalr_lion', func=DecoupledAdaLRLion)
 optimizers.register('clip_lion', func=DecoupledClipLion)
 optimizers.register('decoupled_lionw', func=DecoupledLionW)
 optimizers.register('decoupled_adamw', func=DecoupledAdamW)
+optimizers.register('adamw', func=AdamW)
 optimizers.register('no_op', func=NoOp)
 
 schedulers.register('constant_with_warmup', func=ConstantWithWarmupScheduler)
