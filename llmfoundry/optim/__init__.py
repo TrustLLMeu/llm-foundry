@@ -3,6 +3,7 @@
 
 from torch.optim import AdamW
 from composer.optim import (
+    ConstantDecayWithWarmupScheduler,
     ConstantWithWarmupScheduler,
     CosineAnnealingWithWarmupScheduler,
     DecoupledAdamW,
@@ -22,6 +23,7 @@ optimizers.register('decoupled_adamw', func=DecoupledAdamW)
 optimizers.register('adamw', func=AdamW)
 optimizers.register('no_op', func=NoOp)
 
+schedulers.register('constant_decay_with_warmup', func=ConstantDecayWithWarmupScheduler)
 schedulers.register('constant_with_warmup', func=ConstantWithWarmupScheduler)
 schedulers.register(
     'cosine_with_warmup',
