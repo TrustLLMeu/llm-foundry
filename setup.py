@@ -57,7 +57,7 @@ install_requires = [
     'accelerate>=0.25,<1.2',  # for HF inference `device_map`
     'transformers>=4.43.2,<4.47',
     'mosaicml-streaming>=0.11.0,<0.12',
-    'torch>=2.5.1,<2.5.2',
+    # 'torch>=2.5.1,<2.5.2',
     'datasets>=2.20.0,<3.3',
     'fsspec==2023.6.0',  # newer version results in a bug in datasets that duplicates data
     'sentencepiece==0.2.0',
